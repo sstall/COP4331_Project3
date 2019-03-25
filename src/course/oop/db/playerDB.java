@@ -12,7 +12,7 @@ import java.util.Vector;
 public class playerDB {
 	String dbURL = "jdbc:sqlite:players.db";
 	
-	public playerDB() throws SQLException, ClassNotFoundException {
+	public playerDB() throws SQLException {
 		Connection conn = connectDB();
 		
 		String sql = "CREATE TABLE IF NOT EXISTS players ("
@@ -61,6 +61,16 @@ public class playerDB {
 		return true;
 	}
 	
+	public void removePlayer(String name) throws SQLException {
+		Connection conn = connectDB();
+		
+		String sql = "DELETE FROM players WHERE name = ?";
+		
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, name);
+		pstmt.executeUpdate();
+	}
+	
 	public boolean increaseNumWins(String name) throws SQLException {
 		Connection conn = connectDB();
 		
@@ -96,7 +106,6 @@ public class playerDB {
 		ResultSet rs = pstmt.executeQuery();
 		
 		if(rs.next()) {
-			System.out.println(rs);
 			Vector<String> res = new Vector<String>();
 			
 			res.add(rs.getString("marker"));
@@ -150,7 +159,7 @@ public class playerDB {
 		return -1;
 	}
 	
-	public boolean deleteDB() throws SQLException {
+	public boolean deleteDB() {
 		File f = new File("players.db");
 		return f.delete();
 	}

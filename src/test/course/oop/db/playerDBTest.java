@@ -24,7 +24,6 @@ class playerDBTest {
 		db.deleteDB();
 	}
 	
-
 	@Test
 	void addNewPlayerTest() {
 		try {
@@ -44,13 +43,31 @@ class playerDBTest {
 		try {
 			db.addPlayer("Sam", "S");
 			Vector<String> res = db.getPlayerByName("Sam");
-			System.out.println(res);
 			if(res == null) {
 				fail();
 			}
 			assertEquals("S", res.get(0));
 			assertEquals("0", res.get(1));
 			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	void getAllPlayers() {
+		try {
+			db.addPlayer("Sam", "S");
+			db.addPlayer("Mike", "M");
+			Vector<Vector<String>> list = db.getPlayers();
+			
+			assertEquals("Sam", list.get(0).get(0));
+			assertEquals("S", list.get(0).get(1));
+			assertEquals("0", list.get(0).get(2));
+			assertEquals("Mike", list.get(1).get(0));
+			assertEquals("M", list.get(1).get(1));
+			assertEquals("0", list.get(1).get(2));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail();
@@ -87,6 +104,11 @@ class playerDBTest {
 			e.printStackTrace();
 			fail();
 		}
+	}
+	
+	@Test
+	void deleteDB() {
+		assertTrue(db.deleteDB());
 	}
 
 }

@@ -1,77 +1,131 @@
 package course.oop.view;
 
+import course.oop.game.board;
+import course.oop.game.player;
+import course.oop.game.standardBoard;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class GameView {
 	private BorderPane root;
 	private Scene scene; 
+	private Stage primaryStage;
+	private Text status;
     private final int windowWidth = 800;
     private final int windowHeight = 600;
     
-	public GameView() {
-		this.root = new BorderPane();
+    private player player1;
+    private player player2;
+    private player turn;
+    boolean compGame;
+    private board TTT;
+    private int numTurns;
+    private Text counter;
+    
+    public GameView(Stage primaryStage, String player1, String marker1, String player2, String marker2, boolean compGame) {
+    	this.root = new BorderPane();
 		this.scene = new Scene(root, windowWidth, windowHeight);
-		this.root.setCenter(this.buildMainMenuPane());
-	}
-	
-	public Scene getGameScene() {
-		return this.scene;
-	}
+		this.primaryStage = primaryStage;
+		
+		this.player1 = new player(player1, marker1);
+		this.player2 = new player(player2, marker2);
+		this.turn = this.player1;
+		this.compGame = compGame;
+		numTurns = 1;
+		this.counter = new Text("Turn #" + numTurns);
+		
+		this.status = new Text("Turn: " + this.player1.getPlayerName());
+		
+		TTT = new standardBoard();
+		this.root.setCenter(this.buildBoardPane());
+		this.root.setTop(status);
+		this.root.setBottom(counter);
+    }
 
-	private GridPane buildMainMenuPane() {
-		Text TTT = new Text("Tic Tac Toe");
-		TTT.setFont(Font.font("", FontWeight.BLACK, FontPosture.REGULAR, 100));
-		TTT.setFill(Color.ORANGE);
-		TTT.setStrokeWidth(4);
-		TTT.setStroke(Color.BLUE);
-		
-		Button newGameButton = new Button("New Game");
-		Button quitButton = new Button("Quit");
-		
-		EventHandler<MouseEvent> newGameEvent = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent e) {
-				startGame();
-			}
-		};
-		
-		newGameButton.addEventHandler(MouseEvent.MOUSE_CLICKED, newGameEvent);
-		
-		EventHandler<MouseEvent> quitEvent = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				System.exit(0);
-			}
-		};
-		
-		quitButton.addEventHandler(MouseEvent.MOUSE_CLICKED, quitEvent);
-		
+	private GridPane buildBoardPane() {
 		GridPane grid = new GridPane();
-		grid.setPadding(new Insets(10,10,10,10));
-		grid.setAlignment(Pos.CENTER);
 		
-		grid.add(TTT, 0, 0);
-		grid.add(newGameButton, 0, 1);
-		grid.add(quitButton, 0, 2);
-
+		int[][] state = TTT.displayBoard();
 		
+		for(int i = 0; i < 3; i++) {
+			for(int j = 0; j < 3; j++) {
+				if(state[i][j] == 0) {
+					Button space = new Button("-");
+					space.setId(i + "" + j);
+					
+					EventHandler<MouseEvent> place = new EventHandler<MouseEvent>() {
+						@Override
+						public void handle(MouseEvent e) {
+							char[] coor = space.getId().toCharArray();
+							TTT.placeMove(Character.getNumericValue(coor[0]), Character.getNumericValue(coor[1]), currentPlayer());
+							System.out.println(TTT.checkWin(currentPlayer()));
+							if(TTT.checkWin(currentPlayer())) {
+								
+							}
+							else if(compGame) {
+								TTT.computerMove();
+								if(TTT.checkWin(2)) {
+									
+								}
+							}
+							else {
+								switchTurn();
+								status.setText("Turn: " + turn.getPlayerName());
+							}
+							
+							root.setCenter(buildBoardPane());
+						}
+					};
+					
+					space.addEventHandler(MouseEvent.MOUSE_CLICKED, place);
+					grid.add(space, j, i);
+				}
+				else if(state[i][j] == 1) {
+					Text pSpace = new Text(player1 + "");
+					grid.add(pSpace, j, i);
+				}
+				else {
+					Text pSpace = new Text(player2 + "");
+					grid.add(pSpace, j, i);
+				}
+				
+			}
+		}
+		grid.setVgap(30); 
+        grid.setHgap(30);   
+        grid.setAlignment(Pos.CENTER);
+        
 		return grid;
 	}
+	
+	private void switchTurn() {
+		if(turn == player2) {
+			turn = player1;
+			numTurns++;
+			counter.setText("Turn #" + numTurns);
+		}
+		else {
+			turn = player2;
+		}
+	}
+	
+	private int currentPlayer() {
+		if(turn == player1) {
+			return 1;
+		}
+		else {
+			return 2;
+		}
+	}
 
-	protected void startGame() {
-		// TODO Auto-generated method stub
-		
+	public Scene getScene() {
+		return scene;
 	}
 }

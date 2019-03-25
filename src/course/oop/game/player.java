@@ -4,7 +4,6 @@ public class player {
 
 	private String name;
 	private String marker;
-	private int num;
 	
 	public player(String name, String marker) {
 		this.name = name;
@@ -17,10 +16,6 @@ public class player {
 	
 	public String getPlayerMarker() {
 		return marker;
-	}
-	
-	public int getPlayerNum() {
-		return num;
 	}
 	
 	public String toString() {
