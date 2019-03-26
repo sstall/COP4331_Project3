@@ -10,3 +10,7 @@
 	-fx-font-size: 75pt;
 	-fx-font-weight: bold;
 }
+
+.centerPane {
+	-fx-alignment: center;
+}

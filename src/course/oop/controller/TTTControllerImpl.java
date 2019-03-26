@@ -101,4 +101,8 @@ public class TTTControllerImpl implements TTTControllerInterface{
 	public void computerMove() {
 		T.computerMove();
 	}
+	
+	public int[][] getBoard() {
+		return T.displayBoard();
+	}
 }

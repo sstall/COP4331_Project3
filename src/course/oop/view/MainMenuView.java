@@ -66,9 +66,10 @@ public class MainMenuView {
 		
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10,10,10,10));
-		grid.setAlignment(Pos.CENTER);
+		grid.getStyleClass().add("centerPane");
 		GridPane.setHalignment(newGameButton, HPos.CENTER);
 		GridPane.setHalignment(quitButton, HPos.CENTER);
+		grid.setVgap(10);
 		
 		grid.add(TTT, 0, 0);
 		grid.add(newGameButton, 0, 1);
@@ -81,6 +82,7 @@ public class MainMenuView {
 	protected void selectPlayers() throws SQLException {
 		PlayersView playersV = new PlayersView(primaryStage);
 		Scene scene = playersV.getScene();
+		scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
 		primaryStage.setScene(scene);
 	}
 }

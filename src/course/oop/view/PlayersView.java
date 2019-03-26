@@ -262,12 +262,13 @@ public class PlayersView {
 			@Override
 			public void handle(MouseEvent e) {
 				if(!player1.getText().equals("") && player2.getText().equals("")) {
-					GameView game = new GameView(primaryStage, player1.getText(), marker1, "Computer", "©", true);
+					GameView game = new GameView(primaryStage, player1.getText(), marker1, "Computer", "©", 0,true);
 					Scene scene = game.getScene();
+					scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
 					primaryStage.setScene(scene);
 				}
-				else if(!player1.getText().equals("") && !player2.getText().equals("")) {
-					status.setText("Clear player 2 to player vs a computer");
+				else if(player1.getText().equals("") && !player2.getText().equals("")) {
+					status.setText("Clear player 2 and select a player 1 to play vs a computer");
 				}
 				else if(player1.getText().equals("")) {
 					status.setText("Select a player to play vs a computer");
@@ -279,8 +280,9 @@ public class PlayersView {
 			@Override
 			public void handle(MouseEvent e) {
 				if(!player1.getText().equals("") && !player2.getText().equals("")) {
-					GameView game = new GameView(primaryStage, player1.getText(), marker1, player2.getText(), marker2, false);
+					GameView game = new GameView(primaryStage, player1.getText(), marker1, player2.getText(), marker2, 0, false);
 					Scene scene = game.getScene();
+					scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
 					primaryStage.setScene(scene);
 				}
 				else {
