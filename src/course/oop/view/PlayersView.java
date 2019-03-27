@@ -81,7 +81,7 @@ public class PlayersView {
 			public void handle(MouseEvent e) {
 				try {
 					status.setText("");
-					String playerName = newPlayer.getText();
+					String playerName = newPlayer.getText().trim();
 					String playerMark = newMarker.getText();
 					
 					if(playerName.length() == 0 || playerMark.length() == 0) {
@@ -94,7 +94,7 @@ public class PlayersView {
 					else if(playerMark.length() == 2) {
 						if((int)playerMark.toCharArray()[0] >= 55357) {
 							status.setText("");
-							boolean add = db.addPlayer(newPlayer.getText(), newMarker.getText());
+							boolean add = db.addPlayer(playerName, playerMark);
 							if(!add) {
 								status.setText("Can't add a name that is already entered");
 							}
@@ -109,7 +109,7 @@ public class PlayersView {
 					}
 					else {
 						status.setText("");
-						boolean add = db.addPlayer(newPlayer.getText(), newMarker.getText());
+						boolean add = db.addPlayer(playerName, playerMark);
 						if(!add) {
 							status.setText("Can't add a name that is already entered");
 						}
@@ -258,16 +258,35 @@ public class PlayersView {
 		Button compGame = new Button("Computer Game");
 		Button playerGame = new Button("2p Game");
 		
+		Text timeT = new Text("Timer: ");
+		TextField time = new TextField();
+		
 		EventHandler<MouseEvent> startCompGame = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
 				if(!player1.getText().equals("") && player2.getText().equals("")) {
-					GameView game = new GameView(primaryStage, player1.getText(), marker1, "Computer", "©", 0,true);
-					Scene scene = game.getScene();
-					scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
-					primaryStage.setScene(scene);
+					String timeOut = time.getText();
+					
+					if(timeOut.contentEquals("")) {
+						GameView game = new GameView(primaryStage, player1.getText(), marker1, "Computer", "©", 0, true);
+						Scene scene = game.getScene();
+						scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
+						primaryStage.setScene(scene);
+					}
+					else {
+						try {
+							int t = Integer.parseInt(timeOut);
+							GameView game = new GameView(primaryStage, player1.getText(), marker1, "Computer", "©", t, true);
+							Scene scene = game.getScene();
+							scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
+							primaryStage.setScene(scene);
+						} catch(Exception e1) {
+							status.setText("Error: Timer values must be integers");
+						}
+						
+					}
 				}
-				else if(player1.getText().equals("") && !player2.getText().equals("")) {
+				else if(!player1.getText().equals("") && !player2.getText().equals("")) {
 					status.setText("Clear player 2 and select a player 1 to play vs a computer");
 				}
 				else if(player1.getText().equals("")) {
@@ -280,10 +299,26 @@ public class PlayersView {
 			@Override
 			public void handle(MouseEvent e) {
 				if(!player1.getText().equals("") && !player2.getText().equals("")) {
-					GameView game = new GameView(primaryStage, player1.getText(), marker1, player2.getText(), marker2, 0, false);
-					Scene scene = game.getScene();
-					scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
-					primaryStage.setScene(scene);
+					String timeOut = time.getText();
+					
+					if(timeOut.contentEquals("")) {
+						GameView game = new GameView(primaryStage, player1.getText(), marker1, player2.getText(), marker2, 0, false);
+						Scene scene = game.getScene();
+						scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
+						primaryStage.setScene(scene);
+					}
+					else {
+						try {
+							int t = Integer.parseInt(timeOut);
+							GameView game = new GameView(primaryStage, player1.getText(), marker1, player2.getText(), marker2, t, false);
+							Scene scene = game.getScene();
+							scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
+							primaryStage.setScene(scene);
+						} catch(Exception e1) {
+							status.setText("Error: Timer values must be integers");
+						}
+						
+					}
 				}
 				else {
 					status.setText("Select player 1 and player 2 to play a 2 player game");
@@ -297,6 +332,9 @@ public class PlayersView {
 		grid.add(clear1, 0, 2);
 		grid.add(clear2, 1,	2);
 		
+		grid.add(timeT, 0, 3);
+		grid.add(time, 1, 3);
+		
 		grid.add(compGame, 0, 4);
 		grid.add(playerGame, 1, 4);
 		
@@ -304,7 +342,7 @@ public class PlayersView {
 		
 		grid.setVgap(5); 
         grid.setHgap(20);  
-        grid.setPadding(new Insets(10, 10, 150, 10)); 
+        grid.setPadding(new Insets(10, 10, 10, 10)); 
 		
 		return grid;
 	}

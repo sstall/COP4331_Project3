@@ -10,9 +10,24 @@ import java.sql.Statement;
 import java.util.Vector;
 
 public class playerDB {
-	String dbURL = "jdbc:sqlite:players.db";
+	String dbURL;
 	
 	public playerDB() throws SQLException {
+		dbURL = "./res/players.db";
+		Connection conn = connectDB();
+		
+		String sql = "CREATE TABLE IF NOT EXISTS players ("
+				+ "name text PRIMARY KEY,"
+				+ "marker text NOT NULL,"
+				+ "numWins integer NOT NULL);";
+		
+		Statement stmt = conn.createStatement();
+		stmt.execute(sql);
+		conn.close();
+	}
+	
+	public playerDB(String URL) throws SQLException {
+		dbURL = URL;
 		Connection conn = connectDB();
 		
 		String sql = "CREATE TABLE IF NOT EXISTS players ("
@@ -26,7 +41,7 @@ public class playerDB {
 	}
 	
 	private Connection connectDB() throws SQLException {
-		return DriverManager.getConnection(dbURL);
+		return DriverManager.getConnection("jdbc:sqlite:" + dbURL);
 	}
 	
 	/**
@@ -160,7 +175,7 @@ public class playerDB {
 	}
 	
 	public boolean deleteDB() {
-		File f = new File("players.db");
+		File f = new File(dbURL);
 		return f.delete();
 	}
 }

@@ -1,5 +1,6 @@
 package course.oop.view;
 
+import java.nio.file.Paths;
 import java.sql.SQLException;
 
 import course.oop.controller.TTTControllerImpl;
@@ -12,13 +13,13 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class GameView {
 	private BorderPane root;
 	private Scene scene; 
-	private Stage primaryStage;
 	private Text status;
     private final int windowWidth = 800;
     private final int windowHeight = 600;
@@ -30,17 +31,20 @@ public class GameView {
     private TTTControllerImpl TTT;
     private int numTurns;
     private Text counter;
+    private Text timeText;
     private Button menu;
+    private int timeOut;
+    private int time;
     
     public GameView(Stage primaryStage, String player1, String marker1, String player2, String marker2, int timer, boolean compGame) {
     	this.root = new BorderPane();
     	this.root.setPadding(new Insets(10, 10, 10, 10)); 
 		this.scene = new Scene(root, windowWidth, windowHeight);
-		this.primaryStage = primaryStage;
 		
 		this.player1 = new player(player1, marker1);
 		this.player2 = new player(player2, marker2);
 		this.turn = this.player1;
+		this.timeOut = timer;
 		this.compGame = compGame;
 		numTurns = 1;
 		this.counter = new Text("Turn #" + numTurns);
@@ -55,8 +59,16 @@ public class GameView {
 		
 		GridPane top = new GridPane();
 		
+		
+		
 		top.add(status, 0, 0);
 		top.add(counter, 0, 1);
+		
+		if(timeOut > 0) {
+			timeText = new Text("Timer: " + timer + "s");
+			top.add(timeText, 0, 2);
+		}
+		
 		top.getStyleClass().add("centerPane");
 		
 		this.root.setTop(top);
@@ -96,6 +108,36 @@ public class GameView {
 					EventHandler<MouseEvent> place = new EventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent e) {
+							if(timeOut > 0) {
+								int delay = ((int) System.currentTimeMillis() - time) / 1000;
+								if(delay > timeOut) {
+									timeText.setText("Time ran out for " + turn.getPlayerName() + "!");
+									if(compGame) {
+										TTT.computerMove();
+										int compWin = TTT.determineWinner();
+										if(compWin == 2) {
+											root.setCenter(finalBoard());
+											status.setText(player2.getPlayerName() + " Wins!");
+											finalScreen();
+										}
+										else {
+											numTurns++;
+											counter.setText("Turn #" + numTurns);
+											root.setCenter(buildBoardPane());
+										}
+									}
+									else {
+										switchTurn();
+										root.setCenter(buildBoardPane());
+									}
+								return;
+								}
+							}
+							
+							if(timeOut > 0) {
+								timeText.setText("Timer: " + timeOut + "s");
+							}
+							
 							char[] coor = space.getId().toCharArray();
 							TTT.setSelection(Character.getNumericValue(coor[0]), Character.getNumericValue(coor[1]), currentPlayer());
 							int win = TTT.determineWinner();
@@ -110,6 +152,8 @@ public class GameView {
 								} catch (SQLException e1) {
 									e1.printStackTrace();
 								}
+								AudioClip clap = new AudioClip(Paths.get("res/golfclap.mp3").toUri().toString());
+								clap.play();
 							}
 							else if(win == 2) {
 								root.setCenter(finalBoard());
@@ -122,6 +166,8 @@ public class GameView {
 								} catch (SQLException e1) {
 									e1.printStackTrace();
 								}
+								AudioClip clap = new AudioClip(Paths.get("res/golfclap.mp3").toUri().toString());
+								clap.play();
 							}
 							else if(win == 3) {
 								root.setCenter(finalBoard());
@@ -144,7 +190,6 @@ public class GameView {
 							}
 							else {
 								switchTurn();
-								status.setText("Turn: " + turn.getPlayerName());
 								root.setCenter(buildBoardPane());
 							}
 						}
@@ -165,9 +210,11 @@ public class GameView {
 				
 			}
 		}
-		grid.setVgap(30); 
-        grid.setHgap(30);   
+		grid.setVgap(50); 
+        grid.setHgap(50);   
         grid.getStyleClass().add("centerPane");
+        
+        time = (int) System.currentTimeMillis();
         
 		return grid;
 	}
@@ -181,6 +228,7 @@ public class GameView {
 		else {
 			turn = player2;
 		}
+		status.setText("Turn: " + turn.getPlayerName());
 	}
 	
 	private int currentPlayer() {
@@ -217,8 +265,8 @@ public class GameView {
 			}
 		}
 		
-		grid.setVgap(30); 
-        grid.setHgap(30);   
+		grid.setVgap(50); 
+        grid.setHgap(50);   
         grid.getStyleClass().add("centerPane");
         
 		return grid;

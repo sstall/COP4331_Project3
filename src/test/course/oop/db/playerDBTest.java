@@ -16,7 +16,7 @@ class playerDBTest {
 	
 	@BeforeEach
 	void setUp() throws Exception {
-		db = new playerDB();
+		db = new playerDB("./src/test/player.db");
 	}
 	
 	@AfterEach

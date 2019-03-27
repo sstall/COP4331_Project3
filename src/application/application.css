@@ -1,16 +1,21 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 .root {
-	-fx-background-color: grey;
+	-fx-background-color: #acb0bd;
 }
 
 .title {
-	-fx-fill: orange;
+	-fx-fill: #23395b;
 	-fx-stroke-width: 4px;
-	-fx-stroke: blue;
+	-fx-stroke: #cd8b76;
 	-fx-font-size: 75pt;
 	-fx-font-weight: bold;
 }
 
 .centerPane {
 	-fx-alignment: center;
+}
+
+.button {
+	-fx-color: #d0cdd7;
+	-fx-text-fill: #23395b;
+	-fx-font-size: 11pt;
 }
