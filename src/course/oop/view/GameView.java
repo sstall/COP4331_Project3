@@ -152,8 +152,7 @@ public class GameView {
 								} catch (SQLException e1) {
 									e1.printStackTrace();
 								}
-								AudioClip clap = new AudioClip(Paths.get("res/golfclap.mp3").toUri().toString());
-								clap.play();
+								playSound();
 							}
 							else if(win == 2) {
 								root.setCenter(finalBoard());
@@ -166,8 +165,7 @@ public class GameView {
 								} catch (SQLException e1) {
 									e1.printStackTrace();
 								}
-								AudioClip clap = new AudioClip(Paths.get("res/golfclap.mp3").toUri().toString());
-								clap.play();
+								playSound();
 							}
 							else if(win == 3) {
 								root.setCenter(finalBoard());
@@ -301,5 +299,10 @@ public class GameView {
         bot.getStyleClass().add("centerPane");
 		
 		root.setBottom(bot);
+	}
+	
+	private void playSound() {
+		AudioClip clap = new AudioClip(Paths.get("src/res/golfclap.mp3").toUri().toString());
+		clap.play();
 	}
 }

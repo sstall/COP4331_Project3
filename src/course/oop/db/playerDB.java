@@ -13,7 +13,7 @@ public class playerDB {
 	String dbURL;
 	
 	public playerDB() throws SQLException {
-		dbURL = "./res/players.db";
+		dbURL = "./src/res/players.db";
 		Connection conn = connectDB();
 		
 		String sql = "CREATE TABLE IF NOT EXISTS players ("
